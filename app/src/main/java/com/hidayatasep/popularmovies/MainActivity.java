@@ -36,7 +36,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRecyclerViewItemClickListener{
+public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRecyclerViewItemClickListener,
+        SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -46,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRe
     private ProgressBar mProgressBar;
     private TextView tvNoData;
 
+    SharedPreferences mSharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        setUpSharedreference();
 
         mMovieList = new ArrayList<Movie>();
 
@@ -72,6 +77,14 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRe
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mAdapter);
 
+        if(mMovieList.isEmpty()){
+            downloadMovie();
+        }
+    }
+
+    public void setUpSharedreference(){
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        mSharedPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -100,10 +113,11 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRe
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    protected void onResume() {
-        super.onResume();
-        downloadMovie();
+    protected void onDestroy() {
+        super.onDestroy();
+        mSharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -116,8 +130,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRe
 
     //function for download movie
     public void downloadMovie(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-        String url = Util.getUrl(sharedPreferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_default)));
+        String url = Util.getUrl(mSharedPreferences.getString(getString(R.string.sort_order_key), getString(R.string.sort_order_default)));
         if(Util.isNetworkConnected(MainActivity.this)){
             new DownloadMovie().execute(url);
         }else {
@@ -131,6 +144,13 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.OnRe
         Intent intent = new Intent(MainActivity.this, DetailMovieActivity.class);
         intent.putExtra("movie", mMovieList.get(position));
         startActivity(intent);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals(getString(R.string.sort_order_key))){
+            downloadMovie();
+        }
     }
 
     private class DownloadMovie extends AsyncTask<String, Void, String>{

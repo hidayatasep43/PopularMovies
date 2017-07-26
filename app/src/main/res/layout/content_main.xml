@@ -9,7 +9,6 @@
     tools:context="com.hidayatasep.popularmovies.MainActivity"
     tools:showIn="@layout/activity_main"
     android:background="@color/colorBackgroud"
-    android:padding="@dimen/margin_normal"
     >
 
     <TextView
@@ -35,6 +34,8 @@
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
         android:id="@+id/recycler_view"
+        android:padding="@dimen/margin_normal"
+        android:clipToPadding="false"
         />
 
 </RelativeLayout>

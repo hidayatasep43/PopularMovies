@@ -10,6 +10,8 @@ public class Constant {
     public static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
     public static final String IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300/";
     public static final String IMAGE_BACKDROPH_BASE_URL = "https://image.tmdb.org/t/p/w1000/";
+    public static final String END_URL_VIDEO = "/videos";
+    public static final String END_URL_REVIEWS = "/reviews";
 
 
 

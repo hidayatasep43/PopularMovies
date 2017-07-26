@@ -1,0 +1,113 @@
+package com.hidayatasep.popularmovies.helper;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.util.Log;
+import android.webkit.CookieManager;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+
+/**
+ * Created by hidayatasep43 on 6/28/2017.
+ */
+
+public class Util {
+
+    private static final String TAG = Util.class.getSimpleName();
+
+    //check network
+    public static boolean isNetworkConnected(Context context){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return ((cm.getActiveNetworkInfo() != null) && (cm.getActiveNetworkInfo().isConnected()));
+    }
+
+    public static String downloadUrl(URL url) throws IOException {
+        Log.d(TAG, url.toString());
+        InputStream stream = null;
+        HttpsURLConnection connection = null;
+        String result = null;
+
+        try {
+            connection = (HttpsURLConnection) url.openConnection();
+            // Timeout for reading InputStream arbitrarily set to 3000ms.
+            connection.setReadTimeout(10000);
+            // Timeout for connection.connect() arbitrarily set to 3000ms.
+            connection.setConnectTimeout(10000);
+            // For this use case, set HTTP method to GET.
+            connection.setRequestMethod("GET");
+            // Already true by default but setting just in case; needs to be true since this request
+            // is carrying an input (response) body.
+            connection.setDoInput(true);
+
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setRequestProperty("X-Environment", "android");
+            // Open communications link (network traffic occurs here).
+            connection.connect();
+            // Retrieve the response body as an InputStream.
+            stream = connection.getInputStream();
+
+            if (stream != null) {
+                // Converts Stream to String with max length of 500.
+                result = readStream(stream);
+            }
+        } finally {
+            // Close Stream and disconnect HTTPS connection.
+            if (stream != null) {
+                stream.close();
+            }
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+        return result;
+    }
+
+    public static String readStream(InputStream stream) throws IOException, UnsupportedEncodingException {
+        Reader reader = null;
+        StringBuilder total = new StringBuilder();
+        reader = new InputStreamReader(stream, "UTF-8");
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        String line;
+        while ((line = bufferedReader.readLine()) != null) {
+            total.append(line);
+        }
+        if (reader != null) {
+            reader.close();
+        }
+        if(bufferedReader != null){
+            bufferedReader.close();
+        }
+        return total.toString();
+    }
+
+    public static String getUrl(String orderBy){
+        // Build URL
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(Constant.BASE_URL);
+        stringBuilder.append(orderBy);
+        stringBuilder.append("?api_key=" + Constant.API_KEY);
+
+        Log.d(TAG, stringBuilder.toString());
+
+        return stringBuilder.toString();
+    }
+
+
+}

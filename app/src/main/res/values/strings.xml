@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="no_data_label">No data</string>
+
+    <!-- Preferences -->
+    <string name="orde_by_value">Sort Order</string>
+    <string name="sort_order_default">popular</string>
+    <string name="set_the_sort_order_label">Set the sort order</string>
+    <string name="sort_order_key">prefSortOrder</string>
+    <string name="detail_title">Detail Movie</string>
+    <string name="synopsis_label">Synopsis</string>
+    <string name="user_rating_label">User Rating</string>
+</resources>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hidayatasep.popularmovies.DetailMovieActivity"
+    android:background="@color/colorBackgroundDetailMovie"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/margin_normal"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBackgroud"
+            android:paddingBottom="@dimen/margin_normal"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:id="@+id/image_backdroph"
+                android:scaleType="center"
+                android:adjustViewBounds="true"
+                />
+            <ImageView
+                android:layout_width="148dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:id="@+id/image_movie"
+                android:layout_alignBottom="@+id/tv_releases"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/image_backdroph"
+                android:layout_toRightOf="@+id/image_movie"
+                android:textSize="18sp"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_title"
+                android:textColor="@android:color/white"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/tv_title"
+                android:layout_alignLeft="@+id/tv_title"
+                android:layout_below="@+id/tv_title"
+                android:id="@+id/tv_releases"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/colorTextSecondary"
+                />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBackgroud"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:padding="@dimen/margin_normal"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/synopsis_label"
+                android:textColor="@android:color/white"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_sinopsis"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="@dimen/margin_normal"
+                />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorBackgroud"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:padding="@dimen/margin_normal"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/user_rating_label"
+                android:textColor="@android:color/white"
+                android:id="@+id/userRatingTitle"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/star"
+                android:layout_below="@+id/userRatingTitle"
+                android:layout_marginTop="@dimen/margin_normal"
+                android:id="@+id/starRating"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/starRating"
+                android:layout_alignBottom="@+id/starRating"
+                android:textColor="@android:color/white"
+                android:layout_toRightOf="@+id/starRating"
+                android:layout_marginLeft="@dimen/margin_normal"
+                android:gravity="center_vertical"
+                android:id="@+id/tv_userRating"
+                />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>

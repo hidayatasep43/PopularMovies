@@ -109,5 +109,29 @@ public class Util {
         return stringBuilder.toString();
     }
 
+    public static String getUrlTriller(long id){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(Constant.BASE_URL);
+        stringBuilder.append(id);
+        stringBuilder.append(Constant.END_URL_VIDEO);
+        stringBuilder.append("?api_key=" + Constant.API_KEY);
+
+        Log.d(TAG, stringBuilder.toString());
+
+        return stringBuilder.toString();
+    }
+
+    public static String getUrlUserReview(long id){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(Constant.BASE_URL);
+        stringBuilder.append(id);
+        stringBuilder.append(Constant.END_URL_REVIEWS);
+        stringBuilder.append("?api_key=" + Constant.API_KEY);
+
+        Log.d(TAG, stringBuilder.toString());
+
+        return stringBuilder.toString();
+    }
+
 
 }

@@ -15,12 +15,12 @@ import java.util.List;
  * Created by hidayatasep43 on 7/26/2017.
  */
 
-public class UserReview extends RecyclerView.Adapter<UserReview.UserReviewHolder>{
+public class UserReviewAdapter extends RecyclerView.Adapter<UserReviewAdapter.UserReviewHolder>{
 
     private List<com.hidayatasep.popularmovies.model.UserReview> mUserReviewList;
     private Context mContext;
 
-    public UserReview(List<com.hidayatasep.popularmovies.model.UserReview> userReviewList, Context context) {
+    public UserReviewAdapter(List<com.hidayatasep.popularmovies.model.UserReview> userReviewList, Context context) {
         mUserReviewList = userReviewList;
         mContext = context;
     }

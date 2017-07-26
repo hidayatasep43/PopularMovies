@@ -12,4 +12,6 @@
     <string name="detail_title">Detail Movie</string>
     <string name="synopsis_label">Synopsis</string>
     <string name="user_rating_label">User Rating</string>
+    <string name="triller_label">Triller</string>
+    <string name="user_review_label">User Review</string>
 </resources>

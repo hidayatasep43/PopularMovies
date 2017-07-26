@@ -42,7 +42,6 @@ public class TrillerAdapter extends RecyclerView.Adapter<TrillerAdapter.TrillerV
         TrillerFilm trillerFilm = mTrillerFilmList.get(position);
         Picasso.with(mContext)
                 .load(trillerFilm.getImageUrl())
-                .resize(120,80)
                 //.placeholder(R.drawable.user_placeholder)
                 //.error(R.drawable.user_placeholder_error)
                 .into(holder.mImageView);

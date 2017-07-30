@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.HashMap;
 
@@ -57,13 +58,13 @@ public class MovieProvider extends ContentProvider {
     static final int DATABASE_VERSION = 1;
     static final String CREATE_DB_TABLE =
             " CREATE TABLE " + MOVIE_TABLE_NAME + "(" +
-                    _ID + "LONG PRIMARY KEY , " +
-                    TITLE + "TEXT NOT NULL, " +
-                    IMAGE_URL + "TEXT NOT NULL, " +
-                    SINOPSIS+ "TEXT NOT NULL, " +
-                    USER_RATING + "FLOAT NOT NULL, " +
-                    RELEASE_DATE + "TEXT NOT NULL, " +
-                    BACKDROP_URL + "TEXT NOT NULL); ";
+                    _ID + " LONG PRIMARY KEY , " +
+                    TITLE + " TEXT NOT NULL, " +
+                    IMAGE_URL + " TEXT NOT NULL, " +
+                    SINOPSIS+ " TEXT NOT NULL, " +
+                    USER_RATING + " FLOAT NOT NULL, " +
+                    RELEASE_DATE + " TEXT NOT NULL, " +
+                    BACKDROP_URL + " TEXT NOT NULL); ";
 
     /**
      * Helper class that actually creates and manages
@@ -71,12 +72,15 @@ public class MovieProvider extends ContentProvider {
      */
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
+        private static final String TAG = DatabaseHelper.class.getSimpleName();
+
         DatabaseHelper(Context context){
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            Log.d(TAG,CREATE_DB_TABLE);
             db.execSQL(CREATE_DB_TABLE);
         }
 

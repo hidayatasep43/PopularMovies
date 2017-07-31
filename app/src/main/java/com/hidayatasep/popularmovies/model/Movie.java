@@ -22,6 +22,15 @@ public class Movie implements Parcelable{
     private String mReleaseDate;
     private String mImageBackdrop;
 
+    public Movie(long id, String title, String image, String sinopsis, float userRating, String releaseDate, String imageBackdrop) {
+        mId = id;
+        mTitle = title;
+        mImage = image;
+        mSinopsis = sinopsis;
+        mUserRating = userRating;
+        mReleaseDate = releaseDate;
+        mImageBackdrop = imageBackdrop;
+    }
 
     public Movie(JSONObject object) throws JSONException {
         mId = JsonHelper.getLongJson(object, "id");

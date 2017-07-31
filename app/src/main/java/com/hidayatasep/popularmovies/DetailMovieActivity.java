@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.app.WindowDecorActionBar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,11 +15,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.hidayatasep.popularmovies.adapter.MovieAdapter;
 import com.hidayatasep.popularmovies.adapter.TrillerAdapter;
 import com.hidayatasep.popularmovies.adapter.UserReviewAdapter;
-import com.hidayatasep.popularmovies.contentprovider.MovieProvider;
+import com.hidayatasep.popularmovies.database.MovieProvider;
 import com.hidayatasep.popularmovies.helper.Constant;
 import com.hidayatasep.popularmovies.helper.Util;
 import com.hidayatasep.popularmovies.model.Movie;
@@ -36,8 +35,15 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Currency;
-import java.util.Locale;
+
+import static com.hidayatasep.popularmovies.database.MovieContract.BACKDROP_URL;
+import static com.hidayatasep.popularmovies.database.MovieContract.CONTENT_URI;
+import static com.hidayatasep.popularmovies.database.MovieContract.IMAGE_URL;
+import static com.hidayatasep.popularmovies.database.MovieContract.RELEASE_DATE;
+import static com.hidayatasep.popularmovies.database.MovieContract.SINOPSIS;
+import static com.hidayatasep.popularmovies.database.MovieContract.TITLE;
+import static com.hidayatasep.popularmovies.database.MovieContract.USER_RATING;
+import static com.hidayatasep.popularmovies.database.MovieContract._ID;
 
 public class DetailMovieActivity extends AppCompatActivity implements TrillerAdapter.OnTrillerItemClickListener, View.OnClickListener{
 
@@ -55,6 +61,8 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
     UserReviewAdapter mUserReviewAdapter;
 
     boolean isBookmark = false;
+    boolean isFinishDownloadTriller = false;
+    boolean isFinishDownloadUserReview = false;
 
 
     @Override
@@ -72,11 +80,39 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
         mRecyclerUserReview = (RecyclerView) findViewById(R.id.recycler_view_user_review);
         mImageButtonBookmark = (ImageButton) findViewById(R.id.btn_bookmark);
 
-        //fetching data from percable object
-        mMovie = getIntent().getParcelableExtra("movie");
+        //fetching data from percable movie object
+        if(savedInstanceState != null && savedInstanceState.containsKey("movie")){
+            mMovie = savedInstanceState.getParcelable("movie");
+        }else{
+            mMovie = getIntent().getParcelableExtra("movie");
+        }
 
-        mTrillerFilmsList = new ArrayList<TrillerFilm>();
-        mUserReviewsList = new ArrayList<UserReview>();
+        //fetching data trailer
+        if(savedInstanceState != null && savedInstanceState.containsKey("isDownloadTrailer")){
+            isFinishDownloadTriller = savedInstanceState.getBoolean("isDownloadTrailer");
+        }
+        if(savedInstanceState != null && savedInstanceState.containsKey("trailer")){
+            mTrillerFilmsList = savedInstanceState.getParcelableArrayList("trailer");
+        }else{
+            mTrillerFilmsList = new ArrayList<TrillerFilm>();
+            if(!isFinishDownloadTriller){
+                new DownloadTriller().execute(Util.getUrlTriller(mMovie.getId()));
+            }
+        }
+
+        //fetching data user review
+        if(savedInstanceState != null && savedInstanceState.containsKey("isDownloadUserReview")){
+            isFinishDownloadUserReview = savedInstanceState.getBoolean("isDownloadUserReview");
+        }
+        if(savedInstanceState != null && savedInstanceState.containsKey("userreview")){
+            mUserReviewsList = savedInstanceState.getParcelableArrayList("userreview");
+        }else{
+            mUserReviewsList = new ArrayList<UserReview>();
+            if(!isFinishDownloadUserReview){
+                new DownloadUserRating().execute(Util.getUrlUserReview(mMovie.getId()));
+            }
+        }
+
 
         Picasso.with(DetailMovieActivity.this)
                 .load(Constant.IMAGE_BASE_URL + mMovie.getImage())
@@ -113,10 +149,23 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
 
         mImageButtonBookmark.setOnClickListener(this);
 
+    }
 
-        new DownloadTriller().execute(Util.getUrlTriller(mMovie.getId()));
-        new DownloadUserRating().execute(Util.getUrlUserReview(mMovie.getId()));
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(mUserReviewsList != null){
+            outState.putParcelableArrayList("userreview", mUserReviewsList);
+        }
+        if(mTrillerFilmsList != null){
+            outState.putParcelableArrayList("trailer", mTrillerFilmsList);
+        }
+        if(mMovie != null){
+            outState.putParcelable("movie",mMovie);
+        }
 
+        outState.putBoolean("isDownloadTrailer", isFinishDownloadTriller);
+        outState.putBoolean("isDownloadUserReview", isFinishDownloadUserReview);
 
     }
 
@@ -149,24 +198,25 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
 
     private void insertMovie() {
         ContentValues values = new ContentValues();
-        values.put(MovieProvider._ID, mMovie.getId());
-        values.put(MovieProvider.TITLE, mMovie.getTitle());
-        values.put(MovieProvider.IMAGE_URL, mMovie.getImage());
-        values.put(MovieProvider.SINOPSIS, mMovie.getSinopsis());
-        values.put(MovieProvider.USER_RATING, mMovie.getUserRating());
-        values.put(MovieProvider.RELEASE_DATE, mMovie.getReleaseDate());
-        values.put(MovieProvider.BACKDROP_URL, mMovie.getImageBackdrop());
+        values.put(_ID, mMovie.getId());
+        values.put(TITLE, mMovie.getTitle());
+        values.put(IMAGE_URL, mMovie.getImage());
+        values.put(SINOPSIS, mMovie.getSinopsis());
+        values.put(USER_RATING, mMovie.getUserRating());
+        values.put(RELEASE_DATE, mMovie.getReleaseDate());
+        values.put(BACKDROP_URL, mMovie.getImageBackdrop());
 
         Uri uri = getContentResolver().insert(
-                MovieProvider.CONTENT_URI, values);
+                CONTENT_URI, values);
         Log.d(TAG, uri.toString());
+        Toast.makeText(this, "Add to favorite movie", Toast.LENGTH_SHORT).show();
     }
 
     private boolean checkMovie(){
         String[] projection = {
-            MovieProvider.TITLE
+            TITLE
         };
-        Uri uri = Uri.parse(MovieProvider.CONTENT_URI + "/" + mMovie.getId());
+        Uri uri = Uri.parse(CONTENT_URI + "/" + mMovie.getId());
         Cursor cursor = getContentResolver().query(uri, projection,null,null,null);
         if(cursor == null){
             return false;
@@ -178,8 +228,9 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
     }
 
     private void deleteRecord(){
-        Uri uri = Uri.parse(MovieProvider.CONTENT_URI + "/" + mMovie.getId());
+        Uri uri = Uri.parse(CONTENT_URI + "/" + mMovie.getId());
         getContentResolver().delete(uri,null,null);
+        Toast.makeText(this, "Delete from favorite movie", Toast.LENGTH_SHORT).show();
     }
 
     private class DownloadTriller extends AsyncTask<String, Void, String>{
@@ -226,6 +277,7 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
                             mTrillerFilmsList.add(trillerFilm);
                             mTrillerAdapter.notifyDataSetChanged();
                         }
+                        isFinishDownloadTriller = true;
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG,e.toString());
@@ -280,6 +332,7 @@ public class DetailMovieActivity extends AppCompatActivity implements TrillerAda
                             mUserReviewsList.add(userReview);
                             mUserReviewAdapter.notifyDataSetChanged();
                         }
+                        isFinishDownloadUserReview = true;
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, e.toString());

@@ -34,7 +34,7 @@
 
         <provider
             android:authorities="com.hidayatasep.popularmovies.movieprovider"
-            android:name=".contentprovider.MovieProvider"/>
+            android:name=".database.MovieProvider"/>
 
     </application>
 

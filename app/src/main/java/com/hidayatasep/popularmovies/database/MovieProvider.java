@@ -1,4 +1,4 @@
-package com.hidayatasep.popularmovies.contentprovider;
+package com.hidayatasep.popularmovies.database;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -18,23 +18,22 @@ import android.util.Log;
 
 import java.util.HashMap;
 
+import static com.hidayatasep.popularmovies.database.DatabaseHelper.MOVIE_TABLE_NAME;
+import static com.hidayatasep.popularmovies.database.MovieContract.BACKDROP_URL;
+import static com.hidayatasep.popularmovies.database.MovieContract.CONTENT_URI;
+import static com.hidayatasep.popularmovies.database.MovieContract.IMAGE_URL;
+import static com.hidayatasep.popularmovies.database.MovieContract.PROVIDER_NAME;
+import static com.hidayatasep.popularmovies.database.MovieContract.RELEASE_DATE;
+import static com.hidayatasep.popularmovies.database.MovieContract.SINOPSIS;
+import static com.hidayatasep.popularmovies.database.MovieContract.TITLE;
+import static com.hidayatasep.popularmovies.database.MovieContract.USER_RATING;
+import static com.hidayatasep.popularmovies.database.MovieContract._ID;
+
 /**
  * Created by hidayatasep43 on 7/28/2017.
  */
 
 public class MovieProvider extends ContentProvider {
-
-    public static final String PROVIDER_NAME = "com.hidayatasep.popularmovies.movieprovider";
-    public static final String URL_PROVIDER = "content://" + PROVIDER_NAME + "/movie";
-    public static final Uri CONTENT_URI = Uri.parse(URL_PROVIDER);
-
-    public static final String _ID = "_id";
-    public static final String TITLE = "title";
-    public static final String IMAGE_URL = "imageurl";
-    public static final String SINOPSIS = "_sinopsis";
-    public static final String USER_RATING = "userrating";
-    public static final String RELEASE_DATE = "releasedate";
-    public static final String BACKDROP_URL = "backdropurl";
 
     private static HashMap<String, String> MOVIE_PROJECTION_MAP;
 
@@ -53,43 +52,6 @@ public class MovieProvider extends ContentProvider {
     * */
 
     private SQLiteDatabase db;
-    static final String DATABASE_NAME = "Movie";
-    static final String MOVIE_TABLE_NAME = "movie";
-    static final int DATABASE_VERSION = 1;
-    static final String CREATE_DB_TABLE =
-            " CREATE TABLE " + MOVIE_TABLE_NAME + "(" +
-                    _ID + " LONG PRIMARY KEY , " +
-                    TITLE + " TEXT NOT NULL, " +
-                    IMAGE_URL + " TEXT NOT NULL, " +
-                    SINOPSIS+ " TEXT NOT NULL, " +
-                    USER_RATING + " FLOAT NOT NULL, " +
-                    RELEASE_DATE + " TEXT NOT NULL, " +
-                    BACKDROP_URL + " TEXT NOT NULL); ";
-
-    /**
-     * Helper class that actually creates and manages
-     * the provider's underlying data repository.
-     */
-
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-        private static final String TAG = DatabaseHelper.class.getSimpleName();
-
-        DatabaseHelper(Context context){
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
-
-        @Override
-        public void onCreate(SQLiteDatabase db) {
-            Log.d(TAG,CREATE_DB_TABLE);
-            db.execSQL(CREATE_DB_TABLE);
-        }
-
-        @Override
-        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL("DROP TABLE IF EXISTS " +  MOVIE_TABLE_NAME);
-            onCreate(db);
-        }
-    }
 
     @Override
     public boolean onCreate() {

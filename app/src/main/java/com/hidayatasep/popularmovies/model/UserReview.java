@@ -1,5 +1,8 @@
 package com.hidayatasep.popularmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.hidayatasep.popularmovies.helper.JsonHelper;
 
 import org.json.JSONObject;
@@ -8,7 +11,7 @@ import org.json.JSONObject;
  * Created by hidayatasep43 on 7/26/2017.
  */
 
-public class UserReview {
+public class UserReview implements Parcelable{
 
     private String name;
     private String review;
@@ -21,6 +24,11 @@ public class UserReview {
     public UserReview(JSONObject object) {
         name = JsonHelper.getStringJson(object,"author");
         review = JsonHelper.getStringJson(object,"content");
+    }
+
+    public UserReview(Parcel in){
+        name = in.readString();
+        review = in.readString();
     }
 
     public String getName() {
@@ -38,4 +46,27 @@ public class UserReview {
     public void setReview(String review) {
         this.review = review;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(review);
+    }
+
+    public static final Creator<UserReview> CREATOR = new Creator<UserReview>() {
+        @Override
+        public UserReview createFromParcel(Parcel in) {
+            return new UserReview(in);
+        }
+
+        @Override
+        public UserReview[] newArray(int size) {
+            return new UserReview[size];
+        }
+    };
 }
